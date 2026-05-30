@@ -34,19 +34,28 @@ def test_add_new_user(setup_database, connection):
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE username='testuser';")
     user = cursor.fetchone()
-    assert user, "Пользователь должен быть добавлен в базу данных."
+    assert user, "Пользователь добавлен в базу данных."
 
 def test_add_new_existing_name_user(setup_database, connection):
+    # Тест добавления пользователя с существующим именем.
     add_user('testuser', 'testuser@example.com', 'password123')
     assert not add_user('testuser', 'testuser2@example.com', 'password456') == "Пользователь с таким именем уже существует.", "Должно возвращаться сообщение об ошибке при добавлении пользователя с существующим логином."
 
+def test_successful_authentication(setup_database, connection):
+    """Тест успешной аутентификации пользователя."""
+    add_user('testuser', 'testuser@example.com', 'password123')
+    assert authenticate_user('testuser', 'password123') == True, "Пользователь успешно аутентифицирован."
 
+def test_nonexisting_user(setup_database, connection):
+    #Тест аутентификации несуществующего пользователя.
+    add_user('testuser', 'testuser@example.com', 'password123')
+    assert authenticate_user('nonexistinguser', 'password123') == False, "Аутентификация несуществующего пользователя."
 
-# Возможные варианты тестов:
-"""
-Тест добавления пользователя с существующим логином.
-Тест успешной аутентификации пользователя.
-Тест аутентификации несуществующего пользователя.
-Тест аутентификации пользователя с неправильным паролем.
-Тест отображения списка пользователей.
-"""
+def test_wrong_password(setup_database, connection):
+    #Тест аутентификации пользователя с неправильным паролем.
+    assert authenticate_user('testuser', 'wrong_password') == False, "Неправильный пароль"
+
+def test_display_users(setup_database, connection):
+    """Тест отображения списка пользователей."""
+    users = display_users()
+    assert len(users) > 0, "Должно отображаться хотя бы один пользователь."
