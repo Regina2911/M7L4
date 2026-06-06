@@ -39,7 +39,8 @@ def test_add_new_user(setup_database, connection):
 def test_add_new_existing_name_user(setup_database, connection):
     # Тест добавления пользователя с существующим именем.
     add_user('testuser', 'testuser@example.com', 'password123')
-    assert not add_user('testuser', 'testuser2@example.com', 'password456') is False
+    assert not add_user('testuser', 'testuser2@example.com', 'password456') 
+    
 
 def test_successful_authentication(setup_database, connection):
     """Тест успешной аутентификации пользователя."""
